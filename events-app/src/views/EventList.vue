@@ -5,33 +5,41 @@
       <span> | </span>
       <router-link to="/about">À propos</router-link>
     </div>
-    <EventCard v-for="event in events" v-bind:key="event.id" v-bind:event="event" />
+    <div v-if="isLoading">
+      <p>Chargement des événements en cours</p>
+    </div>
+    <div v-else-if="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+    <div v-else>
+      <EventCard v-for="event in events" v-bind:key="event.id" v-bind:event="event" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import EventCard from '@/components/EventCard.vue'
-import { ref } from 'vue'
-const events = ref([
-  {
-    id: 1,
-    time: '18:00',
-    date: '2025-12-10',
-    title: 'Soirée jeux de société',
-  },
-  {
-    id: 2,
-    time: '14:30',
-    date: '20205-12-15',
-    title: 'Atelier Vue 3',
-  },
-  {
-    id: 3,
-    time: '09:00',
-    date: '2025-12-20',
-    title: 'Petit-déjeuner en classe',
-  },
-])
+import EventService from '@/services/EventService'
+import { ref, onMounted } from 'vue'
+
+const events = ref([])
+const isLoading = ref(false)
+const error = ref(null)
+
+onMounted(async () => {
+  isLoading.value = true
+  error.value = null
+
+  try {
+    const response = await EventService.getEvents()
+    events.value = response.data
+  } catch (err) {
+    console.error(err)
+    error.value = 'Impossible de charger les événements.'
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <style scoped>
@@ -54,5 +62,11 @@ const events = ref([
 
 .nav-links a.router-link-active {
   color: #0000ee;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
 }
 </style>
