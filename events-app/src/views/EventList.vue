@@ -1,6 +1,10 @@
 <template>
   <div class="home-view">
-    <h1>Upcoming Events</h1>
+    <div class="nav-links">
+      <router-link to="/">Événements</router-link>
+      <span> | </span>
+      <router-link to="/about">À propos</router-link>
+    </div>
     <EventCard v-for="event in events" :key="event.id" :event="event" />
   </div>
 </template>
@@ -35,5 +39,20 @@ const events = ref([
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.nav-links {
+  margin-bottom: 25px;
+  font-size: 1.2em;
+}
+
+.nav-links a {
+  font-weight: bold;
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.nav-links a.router-link-active {
+  color: #0000ee;
 }
 </style>
