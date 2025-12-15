@@ -1,5 +1,5 @@
 {
-  "name": "events-app",
+  "name": "weather-app",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,7 +16,6 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
-    "axios": "^1.13.2",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3"
   },
