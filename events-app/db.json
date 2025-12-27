@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "category": "Stage",
+      "title": "Stage de fin d'étude",
+      "description": "Présentation des rapports de stage.",
+      "location": "Salle 204",
+      "date": "2024-06-15",
+      "time": "09:00"
+    },
+    {
+      "id": "2",
+      "category": "Loisirs",
+      "title": "Sortie Paintball",
+      "description": "Sortie cohésion de groupe.",
+      "location": "Extérieur",
+      "date": "2024-07-02",
+      "time": "14:00"
+    }
+  ]
+}

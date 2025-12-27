@@ -1,72 +1,53 @@
 <template>
   <div class="home-view">
-    <div class="nav-links">
-      <router-link to="/">Événements</router-link>
-      <span> | </span>
-      <router-link to="/about">À propos</router-link>
-    </div>
-    <div v-if="isLoading">
-      <p>Chargement des événements en cours</p>
-    </div>
-    <div v-else-if="error" class="error-message">
-      <p>{{ error }}</p>
-    </div>
+    <div v-if="isLoading">Chargement...</div>
     <div v-else>
-      <EventCard v-for="event in events" v-bind:key="event.id" v-bind:event="event" />
+      <EventCard
+        v-for="event in events"
+        :key="event.id"
+        :event="event"
+        @delete="handleDelete"
+        @edit="handleEdit"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import EventCard from '@/components/EventCard.vue'
 import EventService from '@/services/EventService'
-import { ref, onMounted } from 'vue'
 
 const events = ref([])
 const isLoading = ref(false)
-const error = ref(null)
+const router = useRouter()
 
-onMounted(async () => {
+const loadEvents = async () => {
   isLoading.value = true
-  error.value = null
-
   try {
     const response = await EventService.getEvents()
     events.value = response.data
-  } catch (err) {
-    console.error(err)
-    error.value = 'Impossible de charger les événements.'
   } finally {
     isLoading.value = false
   }
-})
+}
+
+onMounted(loadEvents)
+
+const handleDelete = async (id) => {
+  if (confirm("Supprimer cet événement ?")) {
+    await EventService.deleteEvent(id)
+    await loadEvents() // reload after a delete
+  }
+}
+
+const handleEdit = (event) => {
+  router.push({ name: 'EventFormModif', params: { id: event.id } })
+}
 </script>
 
 <style scoped>
-.home-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+.home-view { display: flex; flex-direction: column; align-items: center; }
 
-.nav-links {
-  margin-bottom: 25px;
-  font-size: 1.2em;
-}
-
-.nav-links a {
-  font-weight: bold;
-  color: #2c3e50;
-  text-decoration: none;
-}
-
-.nav-links a.router-link-active {
-  color: #0000ee;
-}
-
-.error-message {
-  color: red;
-  font-weight: bold;
-  margin-top: 20px;
-}
 </style>
