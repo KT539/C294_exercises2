@@ -1,17 +1,13 @@
 import axios from 'axios'
 
+const apiKey = '0f78ccfd064b434fcd9f8a63c45f778a'
 const apiClient = axios.create({
-  baseURL:
-    'https://api.openweathermap.org/data/2.5/weather?q=$%7bcity%7d&appid=$%7bapiKey%7d&units=metric&lang=fr',
-  withCredentials: false,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
+  baseURL: 'https://api.openweathermap.org/data/2.5',
 })
 
 export default {
-  getEvents() {
-    return apiClient.get('/events')
-  },
+  getWeather(city) {
+    // units=metric
+    return apiClient.get(`/weather?q=${city}&appid=${apiKey}&units=metric&lang=fr`)
+  }
 }

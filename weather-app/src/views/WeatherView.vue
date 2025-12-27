@@ -1,74 +1,35 @@
 <template>
-  <div class="home-view">
-    <div class="nav-links">
-      <router-link to="/">Météo Sainte-Croix</router-link>
-      <span> | </span>
-      <router-link to="/">Météo</router-link>
-      <span> | </span>
-      <router-link to="/about">À propos</router-link>
-    </div>
-    <div v-if="isLoading">
-      <p>Chargement de la météo en cours</p>
-    </div>
-    <div v-else-if="error" class="error-message">
-      <p>{{ error }}</p>
-    </div>
-    <div v-else>
-      <WeatherCard v-for="event in events" v-bind:key="event.id" v-bind:event="event" />
+  <div>
+    <h1>Météo d'une ville</h1>
+    <p>Entrez une ville : </p>
+    <input v-model="citySearch" @keyup.enter="search" placeholder="Entrez une ville..." />
+    <button @click="search">Rechercher</button>
+
+    <div v-if="weather" class="result">
+      <h2>{{ weather.name }}</h2>
+      <img :src="`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`" />
+      <p>Température actuelle : {{ weather.main.temp }}°C</p>
+      <p>Température minimum : {{ weather.main.temp_min }}°C</p>
+      <p>Température maximum : {{ weather.main.temp_max }}°C</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import WeatherCard from '@/components/WeatherCard.vue'
+import { ref } from 'vue'
 import WeatherService from '@/services/WeatherService'
-import { ref, onMounted } from 'vue'
 
-const events = ref([])
-const isLoading = ref(false)
-const error = ref(null)
+const citySearch = ref('')
+const weather = ref(null)
 
-onMounted(async () => {
-  isLoading.value = true
-  error.value = null
-
+const search = async () => {
+  if (!citySearch.value) return
   try {
-    const response = await WeatherService.getEvents()
-    events.value = response.data
+    const response = await WeatherService.getWeather(citySearch.value)
+    weather.value = response.data
   } catch (err) {
-    console.error(err)
-    error.value = 'Impossible de charger la météo en cours.'
-  } finally {
-    isLoading.value = false
+    alert("Ville non trouvée");
+    weather.value = null
   }
-})
+}
 </script>
-
-<style scoped>
-.home-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.nav-links {
-  margin-bottom: 25px;
-  font-size: 1.2em;
-}
-
-.nav-links a {
-  font-weight: bold;
-  color: #2c3e50;
-  text-decoration: none;
-}
-
-.nav-links a.router-link-active {
-  color: #0000ee;
-}
-
-.error-message {
-  color: red;
-  font-weight: bold;
-  margin-top: 20px;
-}
-</style>
